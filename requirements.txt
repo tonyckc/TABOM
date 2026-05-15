@@ -1,0 +1,17 @@
+# TABOM / Dream-LLaDA training + lm_eval (see dream_post/eval_tabom*.sh).
+# Pin versions to your CUDA stack; below are reasonable lower bounds.
+torch>=2.1.0
+transformers>=4.40.0
+peft>=0.10.0
+accelerate>=0.28.0
+tqdm>=4.66.0
+safetensors>=0.4.0
+numpy>=1.24.0
+pandas>=2.2.0
+datasets>=2.16.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
+# Code tasks (HumanEval / MBPP) in lm_eval
+evaluate>=0.4.0
+# Optional: GSM8K-style numeric verification used by some train_tabom validation paths
+# math_verify

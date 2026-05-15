@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+wandb/
+output_*/
+logs/
+*.log
+.DS_Store
+.env
+*.safetensors.lock

@@ -1,0 +1,53 @@
+# TABOM
+
+**Trajectory-Aligned Optimization via Boltzmann Modeling (TABOM)** — release code for training and evaluating TABOM post-trained diffusion language models.
+
+## Overview
+
+Diffusion Language Models (DLMs) have recently emerged as a promising alternative to autoregressive language models, offering stronger global awareness and highly parallel generation. However, post-training DLMs with standard Negative Evidence Lower Bound (NELBO)-based supervised fine-tuning remains inefficient: training reconstructs randomly masked tokens in a single step, whereas inference follows a confidence-guided, multi-step easy-to-hard denoising trajectory. Recent trajectory-based self-distillation methods exploit such inference trajectories mainly for sampling-step compression and acceleration, often improving decoding efficiency without substantially enhancing the model's underlying capability, and may even degrade performance under full diffusion decoding.
+
+We propose **Trajectory-Aligned Optimization via Boltzmann Modeling (TABOM)**, a self-distilled trajectory-based post-training framework that aligns training with the easy-to-hard structure of inference. TABOM models the inference unmasking preference as a Boltzmann distribution over predictive entropies and derives a tractable pairwise ranking objective to align the model's certainty ordering with the observed decoding trajectory. Empirically, TABOM achieves substantial gains in new domains, expands the effective knowledge boundary of DLMs, and significantly mitigates catastrophic forgetting compared with standard SFT.
+
+![TABOM framework](images/framework3.jpeg)
+
+Run all commands below from this directory (`cd dream_tabom_release`).
+
+## Install
+
+```bash
+pip install -r requirements.txt
+```
+
+Requires Python 3.10+, a GPU, and Hugging Face access. If `lm_eval` fails with a numpy/pandas binary error: `pip install "pandas>=2.2.0"`.
+
+## Train and evaluate on GSM8K
+
+Dream + prm12k TABOM (`gsm8k_cot`):
+
+```bash
+# Train
+bash dream_post/run_tabom_examples.sh dream_prm12k train
+
+# After training, evaluate (weights under checkpoints/dream_prm12k/train_<timestamp>/final/)
+bash dream_post/eval_tabom.sh checkpoints/dream_prm12k/train_<timestamp>/final gsm8k_cot output_eval/my_run
+```
+
+Print commands without running: `DRY_RUN=1 bash dream_post/run_tabom_examples.sh dream_prm12k train`
+
+For LLaDA + prm12k, use `eval_tabom_llada.sh` and `bash dream_post/run_tabom_examples.sh llada_prm12k train`.
+
+## Evaluate the bundled checkpoint on GSM8K
+
+Bundled LoRA: `checkpoints/dream_prm12k/` (`adapter_config.json` in that folder).
+
+```bash
+bash dream_post/eval_tabom.sh checkpoints/dream_prm12k gsm8k_cot output_eval/dream_prm12k_gsm8k
+```
+
+Or:
+
+```bash
+bash dream_post/run_tabom_examples.sh dream_prm12k eval
+```
+
+If you still have an `epoch_*` subfolder, run: `bash dream_post/rename_release_checkpoints.sh`
